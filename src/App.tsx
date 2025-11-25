@@ -11,6 +11,7 @@ import TestimonialsPage from './pages/TestimonialsPage';
 import ResourcesPage from './pages/ResourcesPage';
 import FAQPage from './pages/FAQPage';
 import ContactPage from './pages/ContactPage';
+import WebinarPage from './pages/WebinarPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/webinar" element={<WebinarPage />} />
         </Routes>
         <Footer />
         <WhatsAppWidget />
