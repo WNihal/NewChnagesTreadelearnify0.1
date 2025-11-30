@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
 import {
   Calendar,
   Clock,
   Globe,
   MapPin,
-  Users,
-  CheckCircle,
   AlertCircle,
-  Send,
-  XCircle,
-  Loader2,
   TrendingUp,
   BookOpen,
   Target,
   Award,
+  CheckCircle,
 } from "lucide-react";
-import { supabase } from "../lib/supabase";
 
 const WebinarPage = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -26,28 +20,6 @@ const WebinarPage = () => {
     seconds: 0,
   });
 
-  const [formData, setFormData] = useState({
-    name: "",
-    whatsapp_number: "",
-    email: "",
-    city: "",
-    market_experience: "",
-  });
-
-  const [popup, setPopup] = useState<{
-    show: boolean;
-    message: string;
-    type: "success" | "error";
-  }>({
-    show: false,
-    message: "",
-    type: "success",
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
-
-  // Countdown Timer - Set your webinar date here
   useEffect(() => {
     const webinarDate = new Date("2025-12-31T18:00:00").getTime();
 
@@ -70,72 +42,15 @@ const WebinarPage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!recaptchaValue) {
-      setPopup({
-        show: true,
-        message: "Please complete the reCAPTCHA verification.",
-        type: "error",
-      });
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      // Store registration in database
-      const { data, error } = await supabase
-        .from("webinar_registrations")
-        .insert([
-          {
-            name: formData.name,
-            whatsapp_number: formData.whatsapp_number,
-            email: formData.email,
-            city: formData.city,
-            market_experience: formData.market_experience,
-            payment_status: "pending",
-          },
-        ])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Redirect to Razorpay payment
-      // <!-- PASTE YOUR RAZORPAY PAYMENT LINK HERE -->
-      // Replace the URL below with your actual Razorpay payment link
-      const razorpayUrl = "https://razorpay.me/@yourbusinessname";
-
-      // Store registration ID in localStorage for payment verification
-      localStorage.setItem("webinar_registration_id", data.id);
-
-      // Redirect to payment
-      window.location.href = razorpayUrl;
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      setPopup({
-        show: true,
-        message: "There was an error processing your registration. Please try again.",
-        type: "error",
-      });
-      setLoading(false);
-    }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleRecaptchaChange = (value: string | null) => {
-    setRecaptchaValue(value);
-  };
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/payment-button.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const benefits = [
     {
@@ -244,13 +159,16 @@ const WebinarPage = () => {
               </div>
             </div>
 
-            {/* CTA Button */}
-            <a
-              href="#register"
-              className="inline-block bg-white text-green-600 px-12 py-5 rounded-xl font-bold text-2xl transition-all duration-300 shadow-2xl hover:shadow-white/25 transform hover:scale-105"
-            >
-              Reserve My Seat – ₹149
-            </a>
+            {/* CTA Button - Razorpay Payment Button */}
+            <div className="flex justify-center">
+              <form>
+                <script
+                  src="https://checkout.razorpay.com/v1/payment-button.js"
+                  data-payment_button_id="pl_Rl4dHxcev2Dgqq"
+                  async
+                ></script>
+              </form>
+            </div>
           </div>
         </div>
       </section>
@@ -317,7 +235,7 @@ const WebinarPage = () => {
         </div>
       </section>
 
-      {/* Registration Form */}
+      {/* Booking Section - Razorpay Payment Button */}
       <section id="register" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Urgency Banner */}
@@ -333,140 +251,21 @@ const WebinarPage = () => {
           <div className="max-w-2xl mx-auto">
             <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
               <h3 className="text-3xl font-bold text-gray-900 mb-2 text-center">
-                Register Now
+                Book Your Seat
               </h3>
               <p className="text-gray-600 text-center mb-8">
-                Fill in your details to secure your seat
+                Secure your spot for this exclusive webinar
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-gray-900 font-semibold mb-2"
-                  >
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-lg border border-gray-300 focus:border-green-500 focus:outline-none transition-colors duration-300"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="whatsapp_number"
-                    className="block text-gray-900 font-semibold mb-2"
-                  >
-                    WhatsApp Number *
-                  </label>
-                  <input
-                    type="tel"
-                    id="whatsapp_number"
-                    name="whatsapp_number"
-                    value={formData.whatsapp_number}
-                    onChange={handleChange}
-                    required
-                    pattern="[0-9]{10}"
-                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-lg border border-gray-300 focus:border-green-500 focus:outline-none transition-colors duration-300"
-                    placeholder="10-digit mobile number"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-gray-900 font-semibold mb-2"
-                  >
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-lg border border-gray-300 focus:border-green-500 focus:outline-none transition-colors duration-300"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="city"
-                    className="block text-gray-900 font-semibold mb-2"
-                  >
-                    City *
-                  </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-lg border border-gray-300 focus:border-green-500 focus:outline-none transition-colors duration-300"
-                    placeholder="Enter your city"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="market_experience"
-                    className="block text-gray-900 font-semibold mb-2"
-                  >
-                    Market Experience *
-                  </label>
-                  <select
-                    id="market_experience"
-                    name="market_experience"
-                    value={formData.market_experience}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-lg border border-gray-300 focus:border-green-500 focus:outline-none transition-colors duration-300"
-                  >
-                    <option value="">Select your experience level</option>
-                    <option value="beginner">Beginner - No Experience</option>
-                    <option value="intermediate">Intermediate - Some Knowledge</option>
-                    <option value="advanced">Advanced - Active Trader</option>
-                  </select>
-                </div>
-
-                <div className="flex justify-center">
-                  <ReCAPTCHA
-                    sitekey="6Lf2dNkrAAAAAIriAJajDmTuW7hHOTOirIiBnALO"
-                    onChange={handleRecaptchaChange}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`w-full px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg flex items-center justify-center space-x-2 ${
-                    loading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-600 hover:bg-green-700 text-white hover:shadow-green-600/25 transform hover:scale-105"
-                  }`}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="animate-spin" size={20} />
-                      <span>Processing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Pay ₹149 & Reserve My Seat</span>
-                    </>
-                  )}
-                </button>
-              </form>
+              <div className="flex justify-center">
+                <form>
+                  <script
+                    src="https://checkout.razorpay.com/v1/payment-button.js"
+                    data-payment_button_id="pl_Rl4dHxcev2Dgqq"
+                    async
+                  ></script>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -570,46 +369,17 @@ const WebinarPage = () => {
           <p className="text-xl mb-8 opacity-90">
             Join us for this exclusive webinar and take the first step towards financial freedom
           </p>
-          <a
-            href="#register"
-            className="inline-block bg-white text-green-600 px-12 py-5 rounded-xl font-bold text-xl transition-all duration-300 shadow-2xl hover:shadow-white/25 transform hover:scale-105"
-          >
-            Reserve My Seat Now – ₹149
-          </a>
-        </div>
-      </section>
-
-      {/* Popup Modal */}
-      {popup.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div
-            className={`bg-white rounded-2xl p-6 w-[90%] max-w-md shadow-lg text-center border ${
-              popup.type === "success" ? "border-green-300" : "border-red-300"
-            }`}
-          >
-            <div className="flex justify-center mb-4">
-              {popup.type === "success" ? (
-                <Send className="text-green-600" size={40} />
-              ) : (
-                <XCircle className="text-red-600" size={40} />
-              )}
-            </div>
-            <h3
-              className={`text-lg font-semibold mb-2 ${
-                popup.type === "success" ? "text-green-700" : "text-red-700"
-              }`}
-            >
-              {popup.message}
-            </h3>
-            <button
-              onClick={() => setPopup({ ...popup, show: false })}
-              className="mt-4 px-6 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-all duration-300"
-            >
-              Close
-            </button>
+          <div className="flex justify-center">
+            <form>
+              <script
+                src="https://checkout.razorpay.com/v1/payment-button.js"
+                data-payment_button_id="pl_Rl4dHxcev2Dgqq"
+                async
+              ></script>
+            </form>
           </div>
         </div>
-      )}
+      </section>
     </div>
   );
 };
