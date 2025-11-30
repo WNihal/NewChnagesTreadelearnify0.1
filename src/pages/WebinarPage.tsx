@@ -48,9 +48,21 @@ const WebinarPage = () => {
     script.async = true;
     document.body.appendChild(script);
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
+
+  const RazorpayButton = () => (
+    <form>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: `<script src="https://checkout.razorpay.com/v1/payment-button.js" data-payment_button_id="pl_Rl4dHxcev2Dgqq" async><\/script>`,
+        }}
+      />
+    </form>
+  );
 
   const benefits = [
     {
@@ -161,13 +173,7 @@ const WebinarPage = () => {
 
             {/* CTA Button - Razorpay Payment Button */}
             <div className="flex justify-center">
-              <form>
-                <script
-                  src="https://checkout.razorpay.com/v1/payment-button.js"
-                  data-payment_button_id="pl_Rl4dHxcev2Dgqq"
-                  async
-                ></script>
-              </form>
+              <RazorpayButton />
             </div>
           </div>
         </div>
@@ -258,13 +264,7 @@ const WebinarPage = () => {
               </p>
 
               <div className="flex justify-center">
-                <form>
-                  <script
-                    src="https://checkout.razorpay.com/v1/payment-button.js"
-                    data-payment_button_id="pl_Rl4dHxcev2Dgqq"
-                    async
-                  ></script>
-                </form>
+                <RazorpayButton />
               </div>
             </div>
           </div>
@@ -370,13 +370,7 @@ const WebinarPage = () => {
             Join us for this exclusive webinar and take the first step towards financial freedom
           </p>
           <div className="flex justify-center">
-            <form>
-              <script
-                src="https://checkout.razorpay.com/v1/payment-button.js"
-                data-payment_button_id="pl_Rl4dHxcev2Dgqq"
-                async
-              ></script>
-            </form>
+            <RazorpayButton />
           </div>
         </div>
       </section>
