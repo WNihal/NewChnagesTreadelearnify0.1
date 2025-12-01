@@ -42,40 +42,15 @@ const WebinarPage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/payment-button.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
-
-  const RazorpayButton = () => {
-    React.useEffect(() => {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/payment-button.js';
-      script.setAttribute('data-payment_button_id', 'pl_Rl4dHxcev2Dgqq');
-      script.async = true;
-      const container = document.getElementById('razorpay-button-container');
-      if (container) {
-        container.appendChild(script);
-      }
-      return () => {
-        if (container && container.contains(script)) {
-          container.removeChild(script);
-        }
-      };
-    }, []);
-
-    return (
-      <form id="razorpay-button-container">
-      </form>
-    );
-  };
+  const RazorpayButton = () => (
+    <form>
+      <script
+        src="https://checkout.razorpay.com/v1/payment-button.js"
+        data-payment_button_id="pl_Rl4dHxcev2Dgqq"
+        async
+      ></script>
+    </form>
+  );
 
   const benefits = [
     {
