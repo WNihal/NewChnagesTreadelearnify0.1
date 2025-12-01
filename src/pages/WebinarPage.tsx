@@ -42,15 +42,6 @@ const WebinarPage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const RazorpayButton = () => (
-    <form>
-      <script
-        src="https://checkout.razorpay.com/v1/payment-button.js"
-        data-payment_button_id="pl_Rl4dHxcev2Dgqq"
-        async
-      ></script>
-    </form>
-  );
 
   const benefits = [
     {
@@ -160,8 +151,18 @@ const WebinarPage = () => {
             </div>
 
             {/* CTA Button - Razorpay Payment Button */}
-            <div className="flex justify-center">
-              <RazorpayButton />
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <form
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    <script
+                      src="https://checkout.razorpay.com/v1/payment-button.js"
+                      data-payment_button_id="pl_Rl4dHxcev2Dgqq"
+                      async>
+                    </script>
+                  `
+                }}
+              />
             </div>
           </div>
         </div>
@@ -251,8 +252,18 @@ const WebinarPage = () => {
                 Secure your spot for this exclusive webinar
               </p>
 
-              <div className="flex justify-center">
-                <RazorpayButton />
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <form
+                  dangerouslySetInnerHTML={{
+                    __html: `
+                      <script
+                        src="https://checkout.razorpay.com/v1/payment-button.js"
+                        data-payment_button_id="pl_Rl4dHxcev2Dgqq"
+                        async>
+                      </script>
+                    `
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -357,8 +368,18 @@ const WebinarPage = () => {
           <p className="text-xl mb-8 opacity-90">
             Join us for this exclusive webinar and take the first step towards financial freedom
           </p>
-          <div className="flex justify-center">
-            <RazorpayButton />
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <form
+              dangerouslySetInnerHTML={{
+                __html: `
+                  <script
+                    src="https://checkout.razorpay.com/v1/payment-button.js"
+                    data-payment_button_id="pl_Rl4dHxcev2Dgqq"
+                    async>
+                  </script>
+                `
+              }}
+            />
           </div>
         </div>
       </section>
